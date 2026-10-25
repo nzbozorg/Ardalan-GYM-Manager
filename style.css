@@ -1,0 +1,993 @@
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #3b82f6;
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --danger: #dc2626;
+    --success: #16a34a;
+    --warning: #ca8a04;
+    --border: #e2e8f0;
+    --checkin: #059669;
+    --update: #8b5cf6;
+    --female: #db2777;
+    --female-light: #fce7f3;
+    --sidebar-width: 280px;
+    --header-height: 70px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    --radius: 16px;
+    --radius-sm: 12px;
+    --transition: all 0.2s ease;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* === صفحه لاگین === */
+.login-view {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(30,58,138,0.88) 0%, rgba(37,99,235,0.78) 50%, rgba(124,58,237,0.78) 100%), url('pic.jpg') center/cover no-repeat;
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-view::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(15,23,42,0.25);
+    backdrop-filter: blur(0px);
+    pointer-events: none;
+}
+
+.login-view.active {
+    display: flex;
+}
+
+.main-panel {
+    display: none;
+    width: 100%;
+}
+
+.main-panel.active {
+    display: flex;
+}
+
+.login-container {
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(12px);
+    padding: 3rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.login-header { margin-bottom: 2.5rem; }
+.login-logo { font-size: 4rem; margin-bottom: 1rem; }
+.login-header h1 { font-size: 1.8rem; color: var(--primary); margin-bottom: 0.5rem; font-weight: 800; }
+.login-header p { color: var(--text-light); font-size: 0.95rem; }
+.login-form { text-align: right; }
+.login-form .form-group { margin-bottom: 1.5rem; }
+.login-form label { display: block; margin-bottom: 0.7rem; font-weight: 600; color: var(--text); }
+.login-form input {
+    width: 100%;
+    padding: 1.1rem 1.3rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: var(--transition);
+    background: #f8fafc;
+}
+.login-form input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+.btn-login { width: 100%; padding: 1.2rem; font-size: 1.1rem; }
+.login-error { color: var(--danger); font-size: 0.9rem; margin-top: 1rem; min-height: 1.5rem; }
+.login-footer { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.login-footer p { color: var(--text-light); font-size: 0.85rem; }
+
+/* === سایدبار === */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--card-bg);
+    border-left: 1px solid var(--border);
+    padding: 1.5rem;
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: -4px 0 12px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 var(--radius) var(--radius) 0;
+}
+.sidebar-header {
+    text-align: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+}
+.sidebar-header h1 { font-size: 1.4rem; color: var(--primary); margin-bottom: 0.3rem; font-weight: 800; }
+.sidebar-header p { font-size: 0.85rem; color: var(--text-light); }
+.nav-menu { list-style: none; flex: 1; }
+.nav-item {
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.5rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.95rem;
+    color: var(--text);
+    font-weight: 500;
+}
+.nav-item:hover { background: #f1f5f9; transform: translateX(-3px); }
+.nav-item.active {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+.nav-item .icon { font-size: 1.3rem; width: 24px; text-align: center; }
+
+/* === وضعیت فایل/سرور === */
+.file-status {
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    border: 1px solid transparent;
+    font-weight: 600;
+    transition: var(--transition);
+}
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.status-dot.green { background: var(--success); box-shadow: 0 0 8px var(--success); }
+.status-dot.red { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+.status-dot.yellow { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+.file-status.connected { background: #dcfce7; color: var(--success); border-color: #86efac; }
+.file-status.disconnected { background: #fee2e2; color: var(--danger); border-color: #fca5a5; }
+.file-status.connecting { background: #fef9c3; color: var(--warning); border-color: #fde047; }
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 100%;
+}
+.sidebar-footer p { font-size: 0.75rem; color: var(--text-light); text-align: center; margin-bottom: 0.5rem; }
+.btn-logout { width: 100%; }
+
+/* === محتوای اصلی === */
+.main-content {
+    flex: 1;
+    margin-right: var(--sidebar-width);
+    padding: 2rem;
+    min-height: 100vh;
+    width: calc(100% - var(--sidebar-width));
+}
+.header {
+    background: var(--card-bg);
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius);
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--border);
+}
+.header-title { font-size: 1.6rem; font-weight: 800; color: var(--primary); }
+#date-display { font-size: 0.9rem; color: var(--text-light); margin-top: 0.3rem; }
+
+/* === کارت‌های آمار === */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.stat-card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); border-color: var(--primary-light); }
+.stat-card .label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+}
+.stat-card .value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    line-height: 1.2;
+}
+.stat-card .value.debt { color: var(--danger); }
+.stat-card .value.income { color: var(--success); }
+.gender-breakdown {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    width: 100%;
+}
+.gender-stat { font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; }
+.gender-stat.male { color: #2563eb; }
+.gender-stat.female { color: #db2777; }
+
+/* === جدول‌ها === */
+.table-container {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+.table-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: #f8fafc;
+}
+.table-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th, .data-table td {
+    padding: 1.2rem 1.5rem;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+}
+.data-table th {
+    background: #f1f5f9;
+    font-weight: 700;
+    color: var(--text-light);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover { background: #f8fafc; }
+.data-table tr.has-debt { background: #fef2f2; }
+
+/* ✅ ردیف‌های رنگی برای وضعیت جلسات */
+.data-table tr.row-warning {
+    background: #fff7ed !important;
+    border-right: 4px solid #f97316;
+}
+.data-table tr.row-warning:hover {
+    background: #ffedd5 !important;
+}
+.data-table tr.row-warning .member-name {
+    color: #c2410c;
+    font-weight: 700;
+}
+.data-table tr.row-danger {
+    background: #fef2f2 !important;
+    border-right: 4px solid #dc2626;
+}
+.data-table tr.row-danger:hover {
+    background: #fee2e2 !important;
+}
+.data-table tr.row-danger .member-name {
+    color: #b91c1c;
+    font-weight: 700;
+}
+
+.member-cell { display: flex; align-items: center; gap: 0.5rem; }
+.member-name { font-weight: 600; color: var(--text); }
+.phone-cell { font-family: 'Tahoma', sans-serif; direction: ltr; text-align: left; font-weight: 600; color: var(--text-light); }
+.debt-amount { color: var(--danger); font-weight: 700; }
+
+/* === دکمه‌ها === */
+.btn {
+    padding: 0.9rem 1.8rem;
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
+.btn-primary:hover { box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); transform: translateY(-2px); }
+.btn-success { background: linear-gradient(135deg, var(--success), #15803d); color: white; box-shadow: 0 4px 10px rgba(22, 163, 74, 0.2); }
+.btn-danger { background: #fee2e2; color: var(--danger); border: 1px solid var(--danger); }
+.btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2); }
+.btn-secondary { background: #e2e8f0; color: var(--text); }
+.btn-secondary:hover { background: #cbd5e1; }
+.btn-full { width: 100%; margin-bottom: 0.8rem; }
+
+/* === دکمه اکسل === */
+.btn-excel {
+    background: linear-gradient(135deg, #107c41, #0b5a2f);
+    color: white;
+    width: 100%;
+    padding: 1.2rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(16, 124, 65, 0.3);
+    justify-content: center;
+    border-radius: var(--radius);
+}
+.btn-excel:hover {
+    background: linear-gradient(135deg, #0b5a2f, #107c41);
+    box-shadow: 0 6px 15px rgba(16, 124, 65, 0.4);
+    transform: translateY(-2px);
+}
+
+/* === فرم‌ها === */
+.form-container {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: var(--radius);
+    max-width: 650px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    margin: 2rem auto;
+    display: block;
+}
+.form-container h2 { font-size: 1.5rem; margin-bottom: 2rem; color: var(--text); font-weight: 700; text-align: center; }
+.form-group { margin-bottom: 1.8rem; }
+.form-group label { display: block; margin-bottom: 0.7rem; font-weight: 600; color: var(--text); }
+.form-group input {
+    width: 100%;
+    padding: 1.1rem 1.3rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: var(--transition);
+    background: #f8fafc;
+}
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+/* === انتخاب جنسیت === */
+.gender-selection { display: flex; gap: 1rem; }
+.gender-card {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    background: #f8fafc;
+    gap: 0.8rem;
+}
+.gender-card:hover { border-color: var(--primary); background: #eff6ff; }
+.gender-card input[type="radio"] { display: none; }
+.gender-card input[type="radio"]:checked + .gender-card-icon,
+.gender-card input[type="radio"]:checked + .gender-card-text { color: var(--primary); }
+.gender-card:has(input[value="male"]:checked) {
+    border-color: var(--primary);
+    background: #dbeafe;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+.gender-card:has(input[value="male"]:checked) .gender-card-icon,
+.gender-card:has(input[value="male"]:checked) .gender-card-text { color: var(--primary); }
+.gender-card:has(input[value="female"]:checked) {
+    border-color: var(--female);
+    background: var(--female-light);
+    box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.1);
+}
+.gender-card:has(input[value="female"]:checked) .gender-card-icon,
+.gender-card:has(input[value="female"]:checked) .gender-card-text { color: var(--female); }
+.gender-card-icon { font-size: 1.8rem; line-height: 1; }
+.gender-card-text { font-size: 1rem; font-weight: 600; color: var(--text); }
+
+/* === جزئیات عضو === */
+.member-detail-header {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+}
+.member-detail-header h2 { font-size: 2rem; margin-bottom: 0.5rem; color: var(--text); font-weight: 800; }
+.member-detail-header p { color: var(--text-light); font-size: 1.1rem; margin-bottom: 2rem; }
+.member-detail-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+.stat-box {
+    background: #f1f5f9;
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: var(--transition);
+}
+.stat-box .label { font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem; }
+.stat-box .value { font-size: 1.8rem; font-weight: 800; }
+
+/* ✅ کادرهای رنگی جزئیات عضو */
+.stat-box.debt-box {
+    background: #fef2f2 !important;
+    border-color: #fecaca !important;
+}
+.stat-box.debt-box .value {
+    color: var(--danger);
+}
+
+.stat-box.income-box {
+    background: #f0fdf4 !important;
+    border-color: #86efac !important;
+}
+.stat-box.income-box .value {
+    color: var(--success);
+}
+
+.stat-box.transactions-box {
+    background: #eff6ff !important;
+    border-color: #93c5fd !important;
+}
+.stat-box.transactions-box .value {
+    color: var(--primary);
+}
+
+.stat-box.sessions-box {
+    background: #eff6ff !important;
+    border-color: #93c5fd !important;
+}
+.stat-box.sessions-box .value {
+    color: var(--primary);
+}
+
+.stat-box.sessions-box.warning {
+    background: #fff7ed !important;
+    border-color: #fdba74 !important;
+}
+.stat-box.sessions-box.warning .value {
+    color: #ea580c;
+}
+
+.stat-box.sessions-box.danger {
+    background: #fef2f2 !important;
+    border-color: #fecaca !important;
+}
+.stat-box.sessions-box.danger .value {
+    color: var(--danger);
+}
+
+.actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.2rem; margin: 2rem 0; }
+.action-btn {
+    padding: 1.5rem;
+    border: none;
+    border-radius: var(--radius);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    transition: var(--transition);
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.action-btn:hover { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+.action-btn.water { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+.action-btn.session { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+.action-btn.payment { background: linear-gradient(135deg, #16a34a, #15803d); }
+.action-btn.checkin { background: linear-gradient(135deg, var(--checkin), #047857); font-size: 1.1rem; padding: 1.5rem; }
+.action-btn .btn-icon { font-size: 2rem; }
+
+/* === تاریخچه === */
+.history-section { margin-top: 2.5rem; }
+.history-section h3 { font-size: 1.3rem; margin-bottom: 1.5rem; color: var(--text); font-weight: 700; }
+.history-list { max-height: 500px; overflow-y: auto; background: var(--card-bg); border-radius: var(--radius); padding: 1rem; border: 1px solid var(--border); }
+
+/* ✅ حذف کامل انیمیشن از تاریخچه تراکنش‌ها */
+.history-item {
+    background: #f8fafc;
+    padding: 1.2rem;
+    border-radius: var(--radius);
+    margin-bottom: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-right: 4px solid #ccc;
+    /* transition و transform حذف شد */
+}
+
+.history-item:hover {
+    /* هیچ انیمیشنی روی hover نیست */
+}
+
+.history-item.type-water { border-right-color: #3b82f6; }
+.history-item.type-session { border-right-color: #8b5cf6; }
+.history-item.type-payment { border-right-color: #16a34a; }
+.history-item.type-checkin { border-right-color: #059669; }
+.history-item.type-debt-session { border-right-color: var(--danger); }
+.history-content { display: flex; flex-direction: column; gap: 0.3rem; }
+.history-desc { font-weight: 600; color: var(--text); }
+.history-date { font-size: 0.8rem; color: var(--text-light); }
+.history-amount { font-weight: 700; font-size: 1.1rem; }
+
+/* === بج‌ها === */
+.badge { padding: 0.4rem 1rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 700; display: inline-block; }
+.badge.sessions { background: #dbeafe; color: var(--primary); }
+.badge.debt { background: #fef2f2; color: var(--danger); }
+.badge.warning-badge { background: #fff7ed; color: #c2410c; }
+.badge.danger-badge { background: #fef2f2; color: #b91c1c; }
+
+/* === جستجو و مرتب‌سازی (داشبورد) === */
+.search-sort-container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    flex: 1;
+    background: white;
+    padding: 0.8rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+}
+.gender-filter { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.filter-btn {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.filter-btn:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+.filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); transform: translateY(-2px); }
+.filter-btn[data-gender="male"].active { background: #2563eb; }
+.filter-btn[data-gender="female"].active { background: #db2777; }
+.search-sort-container input {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    background: #f8fafc;
+    transition: var(--transition);
+}
+.search-sort-container input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.search-sort-container select {
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    background: white;
+    cursor: pointer;
+    min-width: 150px;
+    font-weight: 600;
+    color: var(--text);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: var(--transition);
+}
+.search-sort-container select:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+.search-sort-container select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+
+/* === جستجو و مرتب‌سازی گزارش ماهانه === */
+.report-sort-container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    background: white;
+    padding: 0.8rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+}
+.report-sort-container select {
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    background: white;
+    cursor: pointer;
+    min-width: 180px;
+    font-weight: 600;
+    color: var(--text);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: var(--transition);
+}
+.report-sort-container select:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+.report-sort-container select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+
+/* === ویوها === */
+.view { display: none; }
+.view.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* === نوتیفیکیشن === */
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    padding: 1.2rem 2.5rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    z-index: 1000;
+    transition: var(--transition);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: white;
+    border: 1px solid var(--border);
+}
+.notification.show { transform: translateX(-50%) translateY(0); }
+.notification.success { background: #dcfce7; color: var(--success); border-color: #86efac; }
+.notification.error { background: #fee2e2; color: var(--danger); border-color: #fca5a5; }
+.notification.warning { background: #fef9c3; color: var(--warning); border-color: #fde047; }
+.notification.info { background: #dbeafe; color: var(--primary); border-color: #93c5fd; }
+
+/* === دکمه‌های فایل === */
+.file-actions { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem; }
+
+/* === نشانگر جنسیت در جدول === */
+.gender-badge { padding: 0.3rem 0.8rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600; }
+.gender-badge.male { background: #dbeafe; color: #2563eb; }
+.gender-badge.female { background: #fce7f3; color: #db2777; }
+
+/* === ریسپانسیو === */
+@media (max-width: 1200px) {
+    :root { --sidebar-width: 240px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .main-content { width: calc(100% - var(--sidebar-width)); }
+}
+
+@media (max-width: 768px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100%; position: relative; height: auto; border-left: none; border-bottom: 1px solid var(--border); border-radius: 0 0 var(--radius) var(--radius); }
+    .main-content { margin-right: 0; padding: 1.5rem; width: 100%; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .search-sort-container, .report-sort-container { flex-direction: column; align-items: stretch; }
+    .gender-filter { justify-content: center; }
+}
+
+/* === پرینت === */
+@media print {
+    .sidebar, .btn, .search-sort-container, .report-sort-container, .actions-grid, .header, .login-view { display: none !important; }
+    .main-content { margin-right: 0; padding: 0; }
+    .table-container { box-shadow: none; border: 1px solid #000; }
+}
+
+/* === اسکرول بار زیبا === */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.footer-credit { font-size: 0.75rem; color: var(--text-light); text-align: center; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+
+/* === صفحه نرخ‌ها === */
+.rates-container {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    max-width: 1200px;
+    margin: 2rem auto;
+}
+.rates-container h2 { font-size: 1.5rem; margin-bottom: 2rem; color: var(--text); font-weight: 700; text-align: center; }
+.rate-section { margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+.rate-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.rate-section h3 { font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text); font-weight: 700; }
+.rate-section h4 { font-size: 1rem; margin: 1.5rem 0 1rem; color: var(--text-light); font-weight: 600; }
+.rate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+.rate-card { background: #f8fafc; padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); text-align: center; transition: var(--transition); }
+.rate-card:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
+.rate-card label { display: block; margin-bottom: 0.8rem; font-weight: 600; color: var(--text); }
+.rate-card input { width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 1rem; text-align: center; margin-bottom: 0.8rem; background: white; }
+.rate-card input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+.btn-save-rate { background: var(--success); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; transition: var(--transition); width: 100%; }
+.btn-save-rate:hover { background: #15803d; transform: translateY(-2px); }
+
+/* === آیتم‌های بوفه === */
+.buffet-custom-items { margin-top: 1.5rem; }
+.buffet-items-list { background: #f8fafc; border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--border); }
+.buffet-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    background: white;
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--border);
+}
+.buffet-item-row:last-child { margin-bottom: 0; }
+.btn-delete-buffet {
+    background: #fee2e2;
+    color: var(--danger);
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+.btn-delete-buffet:hover { background: var(--danger); color: white; }
+
+/* === مودال === */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+.modal.active { display: flex; }
+.modal-content {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease;
+}
+.modal-small { max-width: 400px; }
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid var(--border); }
+.modal-header h3 { font-size: 1.2rem; font-weight: 700; color: var(--text); }
+.modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); transition: var(--transition); }
+.modal-close:hover { color: var(--danger); }
+.modal-body { padding: 1.5rem; }
+
+/* === گزینه‌های بوفه و جلسات === */
+.buffet-options, .session-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; }
+.buffet-option, .session-option {
+    background: #f8fafc;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+}
+.buffet-option:hover, .session-option:hover {
+    border-color: var(--primary);
+    background: #eff6ff;
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+.option-icon { font-size: 2rem; }
+.option-name { font-weight: 600; color: var(--text); }
+.option-price { font-size: 0.9rem; color: var(--success); font-weight: 700; }
+
+/* === دکمه بوفه === */
+.action-btn.buffet { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.action-btn.cardio { background: linear-gradient(135deg, #ec4899, #db2777); }
+.action-btn.plan { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+
+/* === خلاصه گزارش ماهانه - سه بخشی === */
+.report-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.report-summary-item {
+    background: var(--card-bg);
+    padding: 1.8rem 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    text-align: center;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+.report-summary-item:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.report-summary-item.buffet { border-top: 4px solid #f59e0b; }
+.report-summary-item.gym { border-top: 4px solid var(--primary); }
+.report-summary-item.total { border-top: 4px solid var(--success); background: linear-gradient(135deg, #f0fdf4, #ffffff); }
+.report-summary-item.count { border-top: 4px solid #8b5cf6; }
+.rs-icon { font-size: 2.5rem; margin-bottom: 0.3rem; }
+.rs-label { font-size: 0.95rem; color: var(--text-light); font-weight: 600; }
+.rs-value { font-size: 1.6rem; font-weight: 800; color: var(--text); display: flex; align-items: baseline; gap: 0.3rem; justify-content: center; }
+.rs-value small { font-size: 0.8rem; color: var(--text-light); font-weight: 600; }
+.report-summary-item.buffet .rs-value { color: #d97706; }
+.report-summary-item.gym .rs-value { color: var(--primary); }
+.report-summary-item.total .rs-value { color: var(--success); font-size: 2rem; }
+.report-summary-item.count .rs-value { color: #8b5cf6; }
+
+@media (max-width: 768px) {
+    .report-summary-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .report-summary-item { padding: 1.2rem 1rem; }
+    .rs-icon { font-size: 2rem; }
+    .rs-value { font-size: 1.2rem; }
+    .report-summary-item.total .rs-value { font-size: 1.5rem; }
+}
+
+/* === تراکنش‌های در انتظار و پرداخت شده === */
+.history-item.pending {
+    background: #fef2f2;
+    border-right-color: var(--danger);
+    border-right-width: 4px;
+}
+.history-item.paid { background: #f0fdf4; }
+/* ✅ انیمیشن hover برای paid هم حذف شد */
+.history-item.paid:hover { }
+
+.status-badge { padding: 0.2rem 0.6rem; border-radius: var(--radius-sm); font-size: 0.7rem; font-weight: 700; display: inline-block; white-space: nowrap; }
+.status-badge.pending { background: #fee2e2; color: var(--danger); animation: pulsePending 2s infinite; }
+.status-badge.paid { background: #dcfce7; color: var(--success); }
+@keyframes pulsePending {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* ✅ کادر بدهی (بدون انیمیشن) */
+#debt-box {
+    background: #f1f5f9;
+    transition: all 0.3s ease;
+}
+
+#debt-box.debt-box {
+    background: #fef2f2 !important;
+    border-color: #fecaca !important;
+}
+
+#debt-box.debt-box .value {
+    color: var(--danger);
+}
+
+/* === دکمه‌های تایید و حذف تراکنش === */
+.btn-confirm-transaction, .btn-delete-transaction { white-space: nowrap; }
+.btn-confirm-transaction:hover { transform: scale(1.05); }
+.btn-delete-transaction:hover { transform: scale(1.05); }
+
+@media (max-width: 768px) {
+    .history-item { flex-direction: column; align-items: stretch; gap: 0.8rem; }
+    .history-actions { justify-content: flex-end; }
+}
+/* === دکمه حضور سریع در داشبورد === */
+.btn-checkin-row {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.btn-checkin-row:hover {
+    background: linear-gradient(135deg, #15803d, #166534);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(22,163,74,0.3);
+}
+.btn-checkin-row:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* === ستاره نسخه === */
+.version-badge {
+    font-size: 10px;
+    color: #94a3b8;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid #e2e8f0;
+}
+
+/* === دکمه حمایت === */
+.btn-donate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #ffdd00;
+    color: #000;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 12px;
+    text-decoration: none;
+    border: 1px solid #eab308;
+    transition: all 0.2s;
+}
+.btn-donate:hover {
+    background: #ffcc00;
+    transform: translateY(-1px);
+}

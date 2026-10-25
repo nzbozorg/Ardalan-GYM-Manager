@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ardalan GYM Manager</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- صفحه لاگین -->
+    <div class="login-view active" id="login-view">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-logo">🏋️</div>
+                <h1>Ardalan GYM Manager</h1>
+                <p>Ardalan GYM Manager</p>
+            </div>
+            <form class="login-form" id="login-form">
+                <div class="form-group">
+                    <label for="login-password">رمز عبور</label>
+                    <input type="password" id="login-password" placeholder="رمز عبور را وارد کنید" autocomplete="current-password">
+                    <div class="login-error" id="login-error"></div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-login">ورود به پنل 🔓</button>
+            </form>
+            <div class="login-footer">
+                <p>ساخته شده توسط <a href="https://github.com/nzbozorg" target="_blank" style="color:#2563eb;font-weight:800;text-decoration:none">Amir NoZohour</a></p>
+                <a href="https://coffeebede.com/Amir_NoZohour" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:#ffdd00;color:#000;padding:8px 16px;border-radius:999px;font-weight:800;font-size:13px;text-decoration:none;border:1px solid #eab308">☕ حمایت مالی</a>
+                <p style="margin-top:10px;font-size:11px;color:#94a3b8">نسخه 1.3.0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- پنل اصلی -->
+    <div class="main-panel" id="main-panel">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1>Ardalan GYM Manager 🏋️</h1>
+                <p>Ardalan GYM Manager</p>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-view="view-dashboard">
+                    <span class="icon">📊</span>
+                    <span>داشبورد</span>
+                </li>
+                <li class="nav-item" data-view="view-add-member">
+                    <span class="icon">➕</span>
+                    <span>عضو جدید</span>
+                </li>
+                <li class="nav-item" data-view="view-rates">
+                    <span class="icon">💰</span>
+                    <span>نرخ‌ها</span>
+                </li>
+                <li class="nav-item" data-view="view-monthly-report">
+                    <span class="icon">📈</span>
+                    <span>گزارش ماهانه</span>
+                </li>
+                <li class="nav-item" data-view="view-settings">
+                    <span class="icon">⚙️</span>
+                    <span>تنظیمات</span>
+                </li>
+            </ul>
+            <div class="file-status connecting" id="file-status">
+                <span>در حال اتصال...</span>
+            </div>
+            <button class="btn btn-excel" id="btn-excel-export">
+                📊 خروجی اکسل
+            </button>
+            <div class="sidebar-footer">
+                <button class="btn btn-danger btn-logout" id="btn-logout">🚪 خروج از پنل</button>
+                <p style="margin-bottom:8px">ساخته شده توسط <a href="https://github.com/nzbozorg" target="_blank" style="color:#2563eb;font-weight:800;text-decoration:none">Amir NoZohour</a></p>
+                <a href="https://coffeebede.com/Amir_NoZohour" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;background:#ffdd00;color:#000;padding:8px 12px;border-radius:10px;font-weight:800;font-size:12px;text-decoration:none;border:1px solid #eab308;margin-bottom:8px">☕ حمایت مالی</a>
+                <p style="font-size:10px;color:#94a3b8">نسخه 1.3.0</p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <div>
+                    <h1 class="header-title" id="header-title">داشبورد</h1>
+                    <div id="date-display"></div>
+                </div>
+            </div>
+
+            <!-- داشبورد -->
+            <div class="view active" id="view-dashboard">
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="search-sort-container">
+                            <div class="gender-filter">
+                                <button class="filter-btn active" data-gender="all">همه 👥 <span id="count-all">0</span></button>
+                                <button class="filter-btn" data-gender="male">آقایان 👨 <span id="count-male">0</span></button>
+                                <button class="filter-btn" data-gender="female">بانوان 👩 <span id="count-female">0</span></button>
+                            </div>
+                            <input type="text" id="search-input" placeholder="🔍 جستجوی نام یا شماره..." oninput="searchMembers()">
+                            <select id="sort-members" onchange="renderDashboard(document.getElementById('search-input').value)">
+                                <option value="newest">جدیدترین 🆕</option>
+                                <option value="oldest">قدیمی‌ترین 📅</option>
+                                <option value="name">نام (الفبا) 🔤</option>
+                                <option value="sessions">بیشترین جلسه 🏋️</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>نام عضو</th>
+                                <th>شماره تلفن</th>
+                                <th>جنسیت</th>
+                                <th>وضعیت جلسات</th>
+                                <th>شهریه</th>
+                                <th>تاریخ عضویت</th>
+                                <th>جزئیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="members-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- افزودن عضو -->
+            <div class="view" id="view-add-member">
+                <div class="form-container">
+                    <h2>افزودن عضو جدید ➕</h2>
+                    <form id="add-member-form">
+                        <div class="form-group">
+                            <label for="new-name">نام و نام خانوادگی</label>
+                            <input type="text" id="new-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-phone">شماره تلفن همراه</label>
+                            <input type="tel" id="new-phone" placeholder="09123456789" required>
+                        </div>
+                        <div class="form-group">
+                            <label>جنسیت</label>
+                            <div class="gender-selection">
+                                <label class="gender-card">
+                                    <input type="radio" name="gender" value="male" checked>
+                                    <span class="gender-card-icon">👨</span>
+                                    <span class="gender-card-text">آقا</span>
+                                </label>
+                                <label class="gender-card">
+                                    <input type="radio" name="gender" value="female">
+                                    <span class="gender-card-icon">👩</span>
+                                    <span class="gender-card-text">خانم</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-height">قد (سانتی‌متر)</label>
+                            <input type="number" id="new-height" placeholder="مثال: 175" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-weight">وزن (کیلوگرم)</label>
+                            <input type="number" id="new-weight" placeholder="مثال: 70" min="0">
+                        </div>
+                        <button type="submit" class="btn btn-success btn-full">ذخیره عضو ✅</button>
+                        <button type="button" class="btn btn-secondary btn-full" onclick="showView('view-dashboard')">انصراف</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- نرخ‌ها -->
+            <div class="view" id="view-rates">
+                <div class="rates-container">
+                    <h2>مدیریت نرخ‌ها 💰</h2>
+                    <div class="rate-section">
+                        <h3>🏋️ نرخ پکیج‌های جلسه</h3>
+                        <div class="rate-grid">
+                            <div class="rate-card">
+                                <label>تک جلسه</label>
+                                <input type="number" id="rate-single" placeholder="0" min="0">
+                            </div>
+                            <div class="rate-card">
+                                <label>12 جلسه</label>
+                                <input type="number" id="rate-12" placeholder="0" min="0">
+                            </div>
+                            <div class="rate-card">
+                                <label>16 جلسه</label>
+                                <input type="number" id="rate-16" placeholder="0" min="0">
+                            </div>
+                            <div class="rate-card">
+                                <label>20 جلسه</label>
+                                <input type="number" id="rate-20" placeholder="0" min="0">
+                            </div>
+                            <div class="rate-card">
+                                <label>26 جلسه</label>
+                                <input type="number" id="rate-26" placeholder="0" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rate-section">
+                        <h3>🏃 نرخ خدمات</h3>
+                        <div class="rate-grid">
+                            <div class="rate-card">
+                                <label>هوازی</label>
+                                <input type="number" id="rate-cardio" placeholder="0" min="0">
+                            </div>
+                            <div class="rate-card">
+                                <label>برنامه تمرینی و غذایی</label>
+                                <input type="number" id="rate-plan" placeholder="0" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rate-section">
+                        <h3>🍔 نرخ بوفه</h3>
+                        <div class="rate-grid">
+                            <div class="rate-card">
+                                <label>آب کوچک</label>
+                                <input type="number" id="rate-water-small" placeholder="0" min="0">
+                            </div>
+                            <div class="rate-card">
+                                <label>آب بزرگ</label>
+                                <input type="number" id="rate-water-large" placeholder="0" min="0">
+                            </div>
+                        </div>
+                        <div class="buffet-custom-items">
+                            <h4>آیتم‌های سفارشی بوفه</h4>
+                            <div class="buffet-items-list" id="buffet-items-list"></div>
+                            <button class="btn btn-primary btn-full" onclick="showAddBuffetItem()">➕ افزودن آیتم جدید</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-success btn-full" onclick="saveAllRates()" style="margin-top: 2rem; padding: 1.2rem; font-size: 1.1rem; background: linear-gradient(135deg, #16a34a, #15803d);">
+                        💾 ذخیره همه نرخ‌ها
+                    </button>
+                    <div id="rates-save-status" style="text-align:center; margin-top:0.8rem; font-size:0.9rem; min-height:1.2rem; color:#64748b;"></div>
+                </div>
+            </div>
+
+            <!-- جزئیات عضو -->
+            <div class="view" id="view-member-detail">
+                <div class="member-detail-header">
+                    <h2 id="detail-name">نام عضو</h2>
+                    <p id="detail-phone">شماره تلفن</p>
+                    <p id="detail-body-info"></p>
+                    <div class="member-detail-stats">
+                        <div class="stat-box sessions-box">
+                            <div class="label">جلسات باقی‌مانده</div>
+                            <div class="value" id="detail-sessions">0</div>
+                        </div>
+                        <div class="stat-box" id="subscription-box">
+                            <div class="label">📅 شهریه ماهانه</div>
+                            <div class="value" id="detail-subscription" style="font-size: 1.1rem;">-</div>
+                            <div style="font-size:0.75rem;color:#64748b;margin-top:4px" id="detail-subscription-sub"></div>
+                        </div>
+                        <div class="stat-box" id="debt-box">
+                            <div class="label">💰 بدهی</div>
+                            <div class="value" id="detail-debt">0 تومان</div>
+                        </div>
+                        <div class="stat-box income-box">
+                            <div class="label">کل پرداختی‌ها</div>
+                            <div class="value" id="detail-total-paid">0 تومان</div>
+                        </div>
+                        <div class="stat-box transactions-box">
+                            <div class="label">تعداد تراکنش</div>
+                            <div class="value" id="detail-trans-count">0</div>
+                        </div>
+                    </div>
+                    <div class="actions-grid">
+                        <button class="action-btn checkin" onclick="checkInMember()">
+                            <span class="btn-icon">✅</span>
+                            ثبت حضور در باشگاه
+                        </button>
+                        <button class="action-btn buffet" onclick="showBuffetModal()">
+                            <span class="btn-icon">🍔</span>
+                            بوفه
+                        </button>
+                        <button class="action-btn session" onclick="showSessionModal()">
+                            <span class="btn-icon">🏋️</span>
+                            خرید جلسه
+                        </button>
+                        <button class="action-btn cardio" onclick="addService('cardio')">
+                            <span class="btn-icon">🏃</span>
+                            هوازی
+                        </button>
+                        <button class="action-btn plan" onclick="addService('plan')">
+                            <span class="btn-icon">📋</span>
+                            برنامه تمرینی
+                        </button>
+                        <button class="action-btn" style="background: linear-gradient(135deg, #0891b2, #0e7490);" onclick="showEditMemberModal()">
+                            <span class="btn-icon">✏️</span>
+                            ویرایش اطلاعات
+                        </button>
+                    </div>
+                </div>
+                <div class="history-section">
+                    <h3>تاریخچه تراکنش‌ها 📜</h3>
+                    <div class="history-list" id="transaction-history"></div>
+                </div>
+                <button class="btn btn-danger btn-full" style="margin-top: 2rem;" onclick="deleteMember()">حذف کامل عضو 🗑</button>
+                <button class="btn btn-secondary btn-full" onclick="showView('view-dashboard')">بازگشت به داشبورد ←</button>
+            </div>
+
+            <!-- مودال بوفه -->
+            <div class="modal" id="buffet-modal">
+                <div class="modal-content modal-small">
+                    <div class="modal-header">
+                        <h3>🍔 انتخاب از بوفه</h3>
+                        <button class="modal-close" onclick="closeModal('buffet-modal')">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="buffet-options">
+                            <button class="buffet-option" onclick="selectBuffetItem('water-small')">
+                                <span class="option-icon">💧</span>
+                                <span class="option-name">آب کوچک</span>
+                                <span class="option-price" id="buffet-price-water-small">0 تومان</span>
+                            </button>
+                            <button class="buffet-option" onclick="selectBuffetItem('water-large')">
+                                <span class="option-icon">💧</span>
+                                <span class="option-name">آب بزرگ</span>
+                                <span class="option-price" id="buffet-price-water-large">0 تومان</span>
+                            </button>
+                        </div>
+                        <div class="buffet-options" id="buffet-custom-options" style="margin-top: 1rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- مودال جلسه -->
+            <div class="modal" id="session-modal">
+                <div class="modal-content modal-small">
+                    <div class="modal-header">
+                        <h3>🏋️ انتخاب پکیج جلسه</h3>
+                        <button class="modal-close" onclick="closeModal('session-modal')">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="session-options">
+                            <button class="session-option" onclick="selectSessionPackage('single')">
+                                <span class="option-icon">🎫</span>
+                                <span class="option-name">تک جلسه</span>
+                                <span class="option-price" id="session-price-single">0 تومان</span>
+                            </button>
+                            <button class="session-option" onclick="selectSessionPackage('12')">
+                                <span class="option-icon">🎟️</span>
+                                <span class="option-name">12 جلسه</span>
+                                <span class="option-price" id="session-price-12">0 تومان</span>
+                            </button>
+                            <button class="session-option" onclick="selectSessionPackage('16')">
+                                <span class="option-icon">🎟️</span>
+                                <span class="option-name">16 جلسه</span>
+                                <span class="option-price" id="session-price-16">0 تومان</span>
+                            </button>
+                            <button class="session-option" onclick="selectSessionPackage('20')">
+                                <span class="option-icon">🎟️</span>
+                                <span class="option-name">20 جلسه</span>
+                                <span class="option-price" id="session-price-20">0 تومان</span>
+                            </button>
+                            <button class="session-option" onclick="selectSessionPackage('26')">
+                                <span class="option-icon">🎟️</span>
+                                <span class="option-name">26 جلسه</span>
+                                <span class="option-price" id="session-price-26">0 تومان</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- مودال افزودن آیتم بوفه -->
+            <div class="modal" id="add-buffet-item-modal">
+                <div class="modal-content modal-small">
+                    <div class="modal-header">
+                        <h3>➕ افزودن آیتم بوفه</h3>
+                        <button class="modal-close" onclick="closeModal('add-buffet-item-modal')">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="new-buffet-item-name">نام آیتم</label>
+                            <input type="text" id="new-buffet-item-name" placeholder="مثال: آبمیوه">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-buffet-item-price">قیمت (تومان)</label>
+                            <input type="number" id="new-buffet-item-price" placeholder="0" min="0">
+                        </div>
+                        <button class="btn btn-success btn-full" onclick="addBuffetItem()">افزودن ✅</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- مودال ویرایش عضو -->
+            <div class="modal" id="edit-member-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>✏️ ویرایش اطلاعات عضو</h3>
+                        <button class="modal-close" onclick="closeModal('edit-member-modal')">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="edit-member-id">
+                        <div class="form-group">
+                            <label for="edit-name">نام و نام خانوادگی</label>
+                            <input type="text" id="edit-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-phone">شماره تلفن همراه</label>
+                            <input type="tel" id="edit-phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label>جنسیت</label>
+                            <div class="gender-selection">
+                                <label class="gender-card">
+                                    <input type="radio" name="edit-gender" value="male">
+                                    <span class="gender-card-icon">👨</span>
+                                    <span class="gender-card-text">آقا</span>
+                                </label>
+                                <label class="gender-card">
+                                    <input type="radio" name="edit-gender" value="female">
+                                    <span class="gender-card-icon">👩</span>
+                                    <span class="gender-card-text">خانم</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-height">قد (سانتی‌متر)</label>
+                            <input type="number" id="edit-height" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-weight">وزن (کیلوگرم)</label>
+                            <input type="number" id="edit-weight" min="0">
+                        </div>
+                        <div class="form-group" style="background:#f0fdf4;padding:1rem;border-radius:10px;border:1px solid #86efac;">
+                            <label for="edit-sessions" style="color:#15803d;font-weight:800">🏋️ جلسات باقی‌مانده</label>
+                            <input type="number" id="edit-sessions" min="0" placeholder="مثال: 12">
+                            <small style="color:#64748b;font-size:0.8rem">نمی‌تواند منفی باشد</small>
+                        </div>
+                        <div class="form-group" style="background:#eff6ff;padding:1rem;border-radius:10px;border:1px solid #93c5fd;">
+                            <label for="edit-expire-days" style="color:#1d4ed8;font-weight:800">📅 روزهای باقی‌مانده تا پایان شهریه</label>
+                            <input type="number" id="edit-expire-days" min="0" placeholder="مثال: 15 (0 = منقضی)">
+                            <small style="color:#64748b;font-size:0.8rem">بعد از این روزها جلسات باقی‌مانده خودکار صفر می‌شود. 30 روز = یک ماه</small>
+                        </div>
+                        <button class="btn btn-success btn-full" onclick="saveEditedMember()">ذخیره تغییرات ✅</button>
+                        <button class="btn btn-secondary btn-full" onclick="closeModal('edit-member-modal')">انصراف</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- گزارش ماهانه -->
+            <div class="view" id="view-monthly-report">
+                <div class="header" style="margin-bottom: 2rem;">
+                
+                </div>
+                <div class="report-summary-grid">
+                    <div class="report-summary-item buffet">
+                        <div class="rs-icon">🍔</div>
+                        <div class="rs-label">پرداختی بوفه</div>
+                        <div class="rs-value"><span id="report-buffet-total">0</span><small>تومان</small></div>
+                    </div>
+                    <div class="report-summary-item gym">
+                        <div class="rs-icon">🏋️</div>
+                        <div class="rs-label">پرداختی باشگاه</div>
+                        <div class="rs-value"><span id="report-gym-total">0</span><small>تومان</small></div>
+                    </div>
+                    <div class="report-summary-item total">
+                        <div class="rs-icon">💰</div>
+                        <div class="rs-label">کل پرداختی‌ها</div>
+                        <div class="rs-value"><span id="report-total">0</span><small>تومان</small></div>
+                    </div>
+                    <div class="report-summary-item count">
+                        <div class="rs-icon">📝</div>
+                        <div class="rs-label">تعداد تراکنش</div>
+                        <div class="rs-value"><span id="report-count">0</span></div>
+                    </div>
+                </div>
+                <div class="table-container" style="margin-bottom: 2rem;">
+                    <div class="table-header">
+                        <h3>لیست اعضا و فعالیت ماه 📋</h3>
+                        <div class="report-sort-container">
+                            <select id="sort-report-members" onchange="renderReportMembers()">
+                                <option value="sessions-desc">بیشترین جلسه 🏋️</option>
+                                <option value="sessions-asc">کمترین جلسه 🏋️</option>
+                                <option value="name">نام (الفبا) 🔤</option>
+                                <option value="payment-desc">بیشترین پرداخت 💰</option>
+                                <option value="payment-asc">کمترین پرداخت 💰</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>نام عضو</th>
+                                <th>شماره تلفن</th>
+                                <th>جلسات</th>
+                                <th>پرداختی</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-members-table-body"></tbody>
+                    </table>
+                </div>
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>تمام تراکنش‌های مالی ماه 📝</h3>
+                        <div class="report-sort-container">
+                            <select id="sort-report-transactions" onchange="renderReportTransactions()">
+                                <option value="newest">جدیدترین 🆕</option>
+                                <option value="oldest">قدیمی‌ترین 📅</option>
+                                <option value="amount-desc">زیاد به کم 💰</option>
+                                <option value="amount-asc">کم به زیاد 💰</option>
+                                <option value="name">نام (الفبا) 🔤</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>نام عضو</th>
+                                <th>توضیحات</th>
+                                <th>تاریخ</th>
+                                <th>مبلغ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-transactions-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- جزئیات گزارش عضو -->
+            <div class="view" id="view-member-report-detail">
+                <div class="member-detail-header">
+                    <h2 id="report-member-name">نام عضو</h2>
+                    <p id="report-member-phone">شماره تلفن</p>
+                    <div class="member-detail-stats">
+                        <div class="stat-box">
+                            <div class="label">جلسات این ماه</div>
+                            <div class="value" id="report-member-sessions">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="label">پرداختی این ماه</div>
+                            <div class="value" id="report-member-payment">0 تومان</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>تراکنش‌های این ماه 📜</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>نوع تراکنش</th>
+                                <th>تاریخ</th>
+                                <th>مبلغ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-member-transactions-body"></tbody>
+                    </table>
+                </div>
+                <button class="btn btn-secondary btn-full" style="margin-top: 2rem;" onclick="showView('view-monthly-report')">بازگشت به گزارش ماهانه ←</button>
+            </div>
+
+            <!-- تنظیمات -->
+            <div class="view" id="view-settings">
+                <div class="form-container">
+                    <h2>تنظیمات پنل ⚙️</h2>
+                    <form id="change-password-form">
+                        <div class="form-group">
+                            <label for="current-password">رمز عبور فعلی</label>
+                            <input type="password" id="current-password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password">رمز عبور جدید</label>
+                            <input type="password" id="new-password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">تکرار رمز عبور جدید</label>
+                            <input type="password" id="confirm-password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">تغییر رمز عبور 🔐</button>
+                    </form>
+                </div>
+
+                <!-- بخش بک‌آپ - جدید -->
+                <div class="form-container" style="margin-top: 2rem; border: 2px solid #86efac; background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);">
+                    <h2 style="color: #15803d;">💾 پشتیبان‌گیری و بازیابی</h2>
+                    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem; text-align: center;">برای جلوگیری از از دست رفتن اطلاعات، هفته‌ای یک‌بار بک‌آپ بگیرید</p>
+                    
+                    <div style="display: grid; gap: 1rem;">
+                        <button class="btn btn-success btn-full" onclick="createBackup()" id="btn-backup" style="background: linear-gradient(135deg, #16a34a, #15803d); padding: 1.2rem; font-size: 1.05rem;">
+                            📥 دانلود فایل پشتیبان (بک‌آپ)
+                        </button>
+                        <div style="display: flex; gap: 0.8rem; align-items: center; background: white; padding: 1rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+                            <div style="flex:1">
+                                <div style="font-weight: 700; color: #1e293b; font-size: 0.9rem;">🔄 بازگردانی پشتیبان</div>
+                                <div style="font-size: 0.8rem; color: #64748b;">فایل .sqlite قبلی را انتخاب کنید</div>
+                            </div>
+                            <label class="btn btn-secondary" style="cursor: pointer; margin: 0; padding: 0.8rem 1.2rem;">
+                                انتخاب فایل
+                                <input type="file" id="restore-file" accept=".sqlite,.db" style="display:none" onchange="restoreBackup(this)">
+                            </label>
+                        </div>
+                        <div id="backup-status" style="text-align: center; font-size: 0.85rem; min-height: 1.2rem; color: #64748b;"></div>
+                        <div style="background: #fef9c3; border: 1px solid #fde047; border-radius: 10px; padding: 0.8rem 1rem; font-size: 0.82rem; color: #854d0e; line-height: 1.6;">
+                            💡 <b>نکته:</b> فایل بک‌آپ با نام <code style="background:white;padding:1px 5px;border-radius:4px">backup-ardalan-YYYY-MM-DD.sqlite</code> دانلود می‌شود. آن را در فلش یا هارد اکسترنال نگهداری کنید. حجم فایل حتی با ۵۰۰۰ عضو کمتر از ۵ مگابایت است.
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-full" style="margin-top: 1.5rem;" onclick="showView('view-dashboard')">بازگشت به داشبورد ←</button>
+                </div>
+
+                <!-- بخش آپدیت خودکار - جدید -->
+                <div class="form-container" style="margin-top: 2rem; border: 2px solid #3b82f6; background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);">
+                    <h2 style="color: #1d4ed8;">🔄 بروزرسانی برنامه</h2>
+                    <p style="color: #64748b; font-size: 0.85rem; text-align: center; margin-bottom: 1rem;">Ardalan GYM Manager • نسخه فعلی: <b id="current-version-display">1.3.0</b></p>
+                    
+                    <div style="background: white; border: 1px solid #bfdbfe; border-radius: 12px; padding: 1.2rem; margin-bottom: 1rem;">
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                            <div style="width:48px;height:48px;background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:24px">🚀</div>
+                            <div>
+                                <div style="font-weight:900;color:#0f172a">Ardalan GYM Manager</div>
+                                <div style="font-size:12px;color:#64748b">مخزن گیت‌هاب: <a href="https://github.com/nzbozorg/Ardalan-GYM-Manager" target="_blank" style="color:#2563eb">nzbozorg/Ardalan-GYM-Manager</a></div>
+                            </div>
+                        </div>
+                        <div id="update-status" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;font-size:13px;color:#475569;text-align:center;min-height:40px;display:flex;align-items:center;justify-content:center">برای بررسی آپدیت روی دکمه زیر بزنید</div>
+                        <div id="update-detail" style="margin-top:10px;font-size:12px;color:#334155;display:none;background:#f8fafc;padding:10px;border-radius:8px;max-height:150px;overflow:auto;white-space:pre-wrap"></div>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                        <button class="btn btn-primary btn-full" onclick="checkForUpdate()" id="btn-check-update" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">
+                            🔍 بررسی آپدیت
+                        </button>
+                        <a href="https://github.com/nzbozorg/Ardalan-GYM-Manager/releases" target="_blank" class="btn btn-secondary btn-full" style="text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">
+                            📥 دانلود از گیت‌هاب
+                        </a>
+                    </div>
+                    <div style="margin-top:12px;background:#fef9c3;border:1px solid #fde047;border-radius:8px;padding:8px 10px;font-size:11px;color:#854d0e">
+                        💡 در حالت آفلاین بررسی آپدیت کار نمی‌کند. برای آپدیت، فایل زیپ جدید را از گیت‌هاب دانلود و روی پوشه قبلی کپی کنید (database.sqlite را نگه دارید).
+                    </div>
+                </div>
+
+                <!-- بخش پاکسازی خودکار -->
+                <div class="form-container" style="margin-top: 2rem; border: 2px solid #f59e0b; background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);">
+                    <h2 style="color: #d97706;">🧹 پاکسازی خودکار</h2>
+                    <p style="color: #64748b; font-size: 0.85rem; text-align: center; margin-bottom: 1rem;">اعضای غیرفعال بعد از 60 روز خودکار حذف می‌شوند</p>
+                    <div style="background:white;border:1px solid #fde68a;border-radius:10px;padding:12px;margin-bottom:12px">
+                        <div id="cleanup-preview" style="font-size:13px;color:#475569;text-align:center">در حال بررسی...</div>
+                        <div id="cleanup-list" style="max-height:120px;overflow:auto;margin-top:8px;font-size:12px"></div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                        <button class="btn btn-secondary btn-full" onclick="previewCleanup()" style="background:#fffbeb;border:1px solid #f59e0b;color:#92400e">👁️ پیش‌نمایش</button>
+                        <button class="btn btn-danger btn-full" onclick="runCleanup()">🗑️ حذف الان</button>
+                    </div>
+                    <p style="font-size:11px;color:#94a3b8;text-align:center;margin-top:8px">این عملیات هر 24 ساعت خودکار هم اجرا می‌شود</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
